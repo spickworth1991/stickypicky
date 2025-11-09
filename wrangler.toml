@@ -1,3 +1,9 @@
-pages_build_output_dir = ".vercel/output/static"
+name = "stickypicky"
+pages_build_output_dir = ".open-next/assets"
 compatibility_date = "2024-09-02"
 compatibility_flags = ["nodejs_compat"]
+
+pages_build_output_dir = ".vercel/output/static"
+
+[vars]
+PAGES_PROJECT_NAME = "stickypicky"
