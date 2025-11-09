@@ -1,26 +1,96 @@
+/* Tailwind v4 entry */
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Design tokens (Tailwind v4) */
+@theme {
+  --color-bg:      #0E1512;   /* dark background */
+  --color-card:    #14201A;   /* cards / nav */
+  --color-fg:      #E5F2EC;   /* main text */
+  --color-muted:   #A3BBAE;   /* secondary text */
+  --color-accent:  #45FFB4;   /* electric emerald */
+  --color-accent-hover: #2DFF96; /* brighter hover */
+  --radius-2xl:    1.5rem;
+  --shadow-soft:   0 10px 30px rgba(0,0,0,0.25);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+:root { color-scheme: dark; }
+html, body { height: 100%; }
+
+/* Component classes (no @layer needed in v4) */
+.section-title { @apply text-2xl font-semibold mb-6; }
+.link {
+  @apply text-[color:var(--color-accent)] hover:underline;
+}
+.muted-link  { @apply text-muted hover:text-fg; }
+
+.btn-primary {
+  @apply inline-flex items-center justify-center rounded-xl px-6 py-3.5
+    bg-[color:var(--color-accent)] text-[color:var(--color-bg)] font-medium 
+    transition hover:bg-[color:var(--color-accent-hover)];
+}
+.btn-ghost {
+  @apply inline-flex items-center justify-center rounded-xl px-5 py-3 border border-white/10 hover:bg-white/5;
+}
+.input {
+  @apply py-3.5 w-full bg-card rounded-lg px-4 py-3 border border-white/10 text-fg placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-[color:var(--color-accent)]; ;
+}
+.card {
+  @apply rounded-3xl border border-white/10 bg-card;
+  box-shadow: var(--shadow-soft);
+}
+.chip {
+  @apply text-xs px-2 py-1 rounded bg-white/5 border border-white/10;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Subtle cyan radial glow for hero */
+.hero-glow {
+  position: absolute;
+  inset: -20% -10% -20% -10%;
+  background:
+    radial-gradient(60% 40% at 20% 10%, rgba(25,227,255,0.10), transparent 60%),
+    radial-gradient(40% 30% at 90% 10%, rgba(25,227,255,0.06), transparent 60%);
+  filter: blur(40px);
+  pointer-events: none;
 }
 
+
+/* premium polish */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background:
+    linear-gradient(to bottom, rgba(255,255,255,0.02), transparent 400px),
+    radial-gradient(1200px 400px at 10% -10%, rgba(25,227,255,0.06), transparent 60%),
+    linear-gradient(90deg, transparent 0 24px, rgba(255,255,255,0.03) 24px 25px, transparent 25px 100%) 0 0/25px 25px,
+    var(--color-bg);
 }
+
+/* nav link underline */
+a.link {
+  position: relative;
+}
+a.link::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: -2px;
+  width: 100%; height: 1px;
+  background: currentColor;
+  opacity: 0; transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .25s ease, opacity .25s ease;
+}
+a.link:hover::after { opacity: .7; transform: scaleX(1); }
+
+/* cards hover elevation */
+.card { transition: box-shadow .25s ease, transform .25s ease; }
+.card:hover { box-shadow: 0 18px 40px rgba(0,0,0,.35); }
+
+.hero-glow {
+  position: absolute;
+  inset: -20% -10% -20% -10%;
+  background:
+    radial-gradient(50% 40% at 20% 10%, rgba(69,255,180,0.15), transparent 60%),
+    radial-gradient(40% 30% at 90% 10%, rgba(45,255,150,0.08), transparent 60%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
