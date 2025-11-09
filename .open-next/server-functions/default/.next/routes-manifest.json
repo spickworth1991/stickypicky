@@ -1,0 +1,131 @@
+{
+  "version": 3,
+  "pages404": true,
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/features/news/[slug]",
+      "regex": "^/features/news/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/features/news/(?<nxtPslug>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/api/badge",
+      "regex": "^/api/badge(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/badge(?:/)?$"
+    },
+    {
+      "page": "/api/badge/svg",
+      "regex": "^/api/badge/svg(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/badge/svg(?:/)?$"
+    },
+    {
+      "page": "/api/badge/track",
+      "regex": "^/api/badge/track(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/badge/track(?:/)?$"
+    },
+    {
+      "page": "/favicon.ico",
+      "regex": "^/favicon\\.ico(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/favicon\\.ico(?:/)?$"
+    },
+    {
+      "page": "/features",
+      "regex": "^/features(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/features(?:/)?$"
+    },
+    {
+      "page": "/features/csv-dashboard",
+      "regex": "^/features/csv\\-dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/features/csv\\-dashboard(?:/)?$"
+    },
+    {
+      "page": "/features/leaderboard",
+      "regex": "^/features/leaderboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/features/leaderboard(?:/)?$"
+    },
+    {
+      "page": "/features/live-badge",
+      "regex": "^/features/live\\-badge(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/features/live\\-badge(?:/)?$"
+    },
+    {
+      "page": "/features/news",
+      "regex": "^/features/news(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/features/news(?:/)?$"
+    },
+    {
+      "page": "/projects",
+      "regex": "^/projects(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/projects(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSuffix": ".prefetch.rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

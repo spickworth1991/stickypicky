@@ -1,0 +1,9 @@
+name = "stickypicky"
+compatibility_date = "2024-12-01"
+main = ".open-next/worker.js"
+
+[assets]
+# OpenNext uploads static assets for you; leave defaults.
+
+[observability]
+enabled = true

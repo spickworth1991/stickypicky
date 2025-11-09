@@ -1,0 +1,16 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/badge/route": "app/api/badge/route.js",
+  "/api/badge/svg/route": "app/api/badge/svg/route.js",
+  "/api/badge/track/route": "app/api/badge/track/route.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/features/csv-dashboard/page": "app/features/csv-dashboard/page.js",
+  "/features/leaderboard/page": "app/features/leaderboard/page.js",
+  "/features/live-badge/page": "app/features/live-badge/page.js",
+  "/features/news/[slug]/page": "app/features/news/[slug]/page.js",
+  "/features/news/page": "app/features/news/page.js",
+  "/features/page": "app/features/page.js",
+  "/page": "app/page.js",
+  "/projects/page": "app/projects/page.js"
+}
