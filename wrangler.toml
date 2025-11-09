@@ -1,4 +1,5 @@
 # wrangler.toml
 name = "stickypicky"
 compatibility_date = "2025-11-09"
+compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".open-next/assets"

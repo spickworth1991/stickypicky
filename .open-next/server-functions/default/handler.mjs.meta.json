@@ -3531,18 +3531,13 @@
       "imports": [],
       "format": "cjs"
     },
-    ".open-next/server-functions/default/.next/server/app/_global-error/page_client-reference-manifest.js": {
-      "bytes": 5988,
-      "imports": [],
-      "format": "cjs"
-    },
     ".open-next/server-functions/default/.next/server/app/_not-found/page_client-reference-manifest.js": {
       "bytes": 6106,
       "imports": [],
       "format": "cjs"
     },
-    ".open-next/server-functions/default/.next/server/app/projects/page_client-reference-manifest.js": {
-      "bytes": 7393,
+    ".open-next/server-functions/default/.next/server/app/_global-error/page_client-reference-manifest.js": {
+      "bytes": 5988,
       "imports": [],
       "format": "cjs"
     },
@@ -3551,8 +3546,23 @@
       "imports": [],
       "format": "cjs"
     },
+    ".open-next/server-functions/default/.next/server/app/projects/page_client-reference-manifest.js": {
+      "bytes": 7393,
+      "imports": [],
+      "format": "cjs"
+    },
+    ".open-next/server-functions/default/.next/server/app/api/badge/route_client-reference-manifest.js": {
+      "bytes": 312,
+      "imports": [],
+      "format": "cjs"
+    },
     ".open-next/server-functions/default/.next/server/app/features/news/page_client-reference-manifest.js": {
       "bytes": 6763,
+      "imports": [],
+      "format": "cjs"
+    },
+    ".open-next/server-functions/default/.next/server/app/features/live-badge/page_client-reference-manifest.js": {
+      "bytes": 6715,
       "imports": [],
       "format": "cjs"
     },
@@ -3566,28 +3576,18 @@
       "imports": [],
       "format": "cjs"
     },
-    ".open-next/server-functions/default/.next/server/app/api/badge/route_client-reference-manifest.js": {
-      "bytes": 312,
-      "imports": [],
-      "format": "cjs"
-    },
-    ".open-next/server-functions/default/.next/server/app/features/live-badge/page_client-reference-manifest.js": {
-      "bytes": 6715,
-      "imports": [],
-      "format": "cjs"
-    },
     ".open-next/server-functions/default/.next/server/app/features/news/[slug]/page_client-reference-manifest.js": {
       "bytes": 7309,
       "imports": [],
       "format": "cjs"
     },
-    ".open-next/server-functions/default/.next/server/app/api/badge/track/route_client-reference-manifest.js": {
-      "bytes": 318,
+    ".open-next/server-functions/default/.next/server/app/api/badge/svg/route_client-reference-manifest.js": {
+      "bytes": 316,
       "imports": [],
       "format": "cjs"
     },
-    ".open-next/server-functions/default/.next/server/app/api/badge/svg/route_client-reference-manifest.js": {
-      "bytes": 316,
+    ".open-next/server-functions/default/.next/server/app/api/badge/track/route_client-reference-manifest.js": {
+      "bytes": 318,
       "imports": [],
       "format": "cjs"
     },
@@ -3620,19 +3620,14 @@
           "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\page_client-reference-manifest.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/app/_global-error/page_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\_global-error\\page_client-reference-manifest.js"
-        },
-        {
           "path": ".open-next/server-functions/default/.next/server/app/_not-found/page_client-reference-manifest.js",
           "kind": "require-call",
           "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\_not-found\\page_client-reference-manifest.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/app/projects/page_client-reference-manifest.js",
+          "path": ".open-next/server-functions/default/.next/server/app/_global-error/page_client-reference-manifest.js",
           "kind": "require-call",
-          "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\projects\\page_client-reference-manifest.js"
+          "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\_global-error\\page_client-reference-manifest.js"
         },
         {
           "path": ".open-next/server-functions/default/.next/server/app/features/page_client-reference-manifest.js",
@@ -3640,9 +3635,24 @@
           "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\features\\page_client-reference-manifest.js"
         },
         {
+          "path": ".open-next/server-functions/default/.next/server/app/projects/page_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\projects\\page_client-reference-manifest.js"
+        },
+        {
+          "path": ".open-next/server-functions/default/.next/server/app/api/badge/route_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\api\\badge\\route_client-reference-manifest.js"
+        },
+        {
           "path": ".open-next/server-functions/default/.next/server/app/features/news/page_client-reference-manifest.js",
           "kind": "require-call",
           "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\features\\news\\page_client-reference-manifest.js"
+        },
+        {
+          "path": ".open-next/server-functions/default/.next/server/app/features/live-badge/page_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\features\\live-badge\\page_client-reference-manifest.js"
         },
         {
           "path": ".open-next/server-functions/default/.next/server/app/features/leaderboard/page_client-reference-manifest.js",
@@ -3655,29 +3665,19 @@
           "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\features\\csv-dashboard\\page_client-reference-manifest.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/app/api/badge/route_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\api\\badge\\route_client-reference-manifest.js"
-        },
-        {
-          "path": ".open-next/server-functions/default/.next/server/app/features/live-badge/page_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\features\\live-badge\\page_client-reference-manifest.js"
-        },
-        {
           "path": ".open-next/server-functions/default/.next/server/app/features/news/[slug]/page_client-reference-manifest.js",
           "kind": "require-call",
           "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\features\\news\\[slug]\\page_client-reference-manifest.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/app/api/badge/track/route_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\api\\badge\\track\\route_client-reference-manifest.js"
-        },
-        {
           "path": ".open-next/server-functions/default/.next/server/app/api/badge/svg/route_client-reference-manifest.js",
           "kind": "require-call",
           "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\api\\badge\\svg\\route_client-reference-manifest.js"
+        },
+        {
+          "path": ".open-next/server-functions/default/.next/server/app/api/badge/track/route_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\api\\badge\\track\\route_client-reference-manifest.js"
         }
       ],
       "format": "cjs"
@@ -4725,14 +4725,14 @@
           "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\_not-found\\page_client-reference-manifest.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/app/_global-error/page_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\_global-error\\page_client-reference-manifest.js"
-        },
-        {
           "path": ".open-next/server-functions/default/.next/server/app/projects/page_client-reference-manifest.js",
           "kind": "require-call",
           "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\projects\\page_client-reference-manifest.js"
+        },
+        {
+          "path": ".open-next/server-functions/default/.next/server/app/_global-error/page_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\_global-error\\page_client-reference-manifest.js"
         },
         {
           "path": ".open-next/server-functions/default/.next/server/app/features/page_client-reference-manifest.js",
@@ -4745,9 +4745,9 @@
           "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\features\\news\\page_client-reference-manifest.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/app/features/live-badge/page_client-reference-manifest.js",
+          "path": ".open-next/server-functions/default/.next/server/app/features/leaderboard/page_client-reference-manifest.js",
           "kind": "require-call",
-          "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\features\\live-badge\\page_client-reference-manifest.js"
+          "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\features\\leaderboard\\page_client-reference-manifest.js"
         },
         {
           "path": ".open-next/server-functions/default/.next/server/app/features/csv-dashboard/page_client-reference-manifest.js",
@@ -4755,9 +4755,9 @@
           "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\features\\csv-dashboard\\page_client-reference-manifest.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/app/features/leaderboard/page_client-reference-manifest.js",
+          "path": ".open-next/server-functions/default/.next/server/app/features/live-badge/page_client-reference-manifest.js",
           "kind": "require-call",
-          "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\features\\leaderboard\\page_client-reference-manifest.js"
+          "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\features\\live-badge\\page_client-reference-manifest.js"
         },
         {
           "path": ".open-next/server-functions/default/.next/server/app/api/badge/route_client-reference-manifest.js",
@@ -4770,14 +4770,14 @@
           "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\features\\news\\[slug]\\page_client-reference-manifest.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/app/api/badge/track/route_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\api\\badge\\track\\route_client-reference-manifest.js"
-        },
-        {
           "path": ".open-next/server-functions/default/.next/server/app/api/badge/svg/route_client-reference-manifest.js",
           "kind": "require-call",
           "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\api\\badge\\svg\\route_client-reference-manifest.js"
+        },
+        {
+          "path": ".open-next/server-functions/default/.next/server/app/api/badge/track/route_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "C:\\Users\\spick\\Projects\\sticky-portfolio\\.open-next\\server-functions\\default\\.next\\server\\app\\api\\badge\\track\\route_client-reference-manifest.js"
         }
       ],
       "format": "cjs"
@@ -8350,20 +8350,26 @@
         ".open-next/server-functions/default/.next/server/app/page_client-reference-manifest.js": {
           "bytesInOutput": 7526
         },
-        ".open-next/server-functions/default/.next/server/app/_global-error/page_client-reference-manifest.js": {
-          "bytesInOutput": 5754
-        },
         ".open-next/server-functions/default/.next/server/app/_not-found/page_client-reference-manifest.js": {
           "bytesInOutput": 5862
         },
-        ".open-next/server-functions/default/.next/server/app/projects/page_client-reference-manifest.js": {
-          "bytesInOutput": 7044
+        ".open-next/server-functions/default/.next/server/app/_global-error/page_client-reference-manifest.js": {
+          "bytesInOutput": 5754
         },
         ".open-next/server-functions/default/.next/server/app/features/page_client-reference-manifest.js": {
           "bytesInOutput": 8540
         },
+        ".open-next/server-functions/default/.next/server/app/projects/page_client-reference-manifest.js": {
+          "bytesInOutput": 7044
+        },
+        ".open-next/server-functions/default/.next/server/app/api/badge/route_client-reference-manifest.js": {
+          "bytesInOutput": 459
+        },
         ".open-next/server-functions/default/.next/server/app/features/news/page_client-reference-manifest.js": {
           "bytesInOutput": 6467
+        },
+        ".open-next/server-functions/default/.next/server/app/features/live-badge/page_client-reference-manifest.js": {
+          "bytesInOutput": 6425
         },
         ".open-next/server-functions/default/.next/server/app/features/leaderboard/page_client-reference-manifest.js": {
           "bytesInOutput": 6422
@@ -8371,20 +8377,14 @@
         ".open-next/server-functions/default/.next/server/app/features/csv-dashboard/page_client-reference-manifest.js": {
           "bytesInOutput": 6463
         },
-        ".open-next/server-functions/default/.next/server/app/api/badge/route_client-reference-manifest.js": {
-          "bytesInOutput": 459
-        },
-        ".open-next/server-functions/default/.next/server/app/features/live-badge/page_client-reference-manifest.js": {
-          "bytesInOutput": 6425
-        },
         ".open-next/server-functions/default/.next/server/app/features/news/[slug]/page_client-reference-manifest.js": {
           "bytesInOutput": 6973
         },
-        ".open-next/server-functions/default/.next/server/app/api/badge/track/route_client-reference-manifest.js": {
-          "bytesInOutput": 472
-        },
         ".open-next/server-functions/default/.next/server/app/api/badge/svg/route_client-reference-manifest.js": {
           "bytesInOutput": 468
+        },
+        ".open-next/server-functions/default/.next/server/app/api/badge/track/route_client-reference-manifest.js": {
+          "bytesInOutput": 472
         },
         ".open-next/server-functions/default/node_modules/next/dist/server/load-manifest.external.js": {
           "bytesInOutput": 21395
