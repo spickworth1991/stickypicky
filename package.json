@@ -4,23 +4,20 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "cf:build": "opennextjs-cloudflare build && node scripts/copy-worker.cjs",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare upload --pages",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "lint": "eslint"
+    "cf:build": "npx @cloudflare/next-on-pages --outdir .vercel/output"
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.19",
-    "next": "16.0.1",
+    "next": "15.5.2",
     "papaparse": "^5.5.3",
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "react-markdown": "^10.1.0",
     "recharts": "^3.3.0",
     "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
-    "@opennextjs/cloudflare": "^1.11.1",
+    "@cloudflare/next-on-pages": "1.13.16",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
