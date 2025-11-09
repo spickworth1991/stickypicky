@@ -6,7 +6,17 @@ import { initialNewsItems } from "@/lib/mockData";
 const STORAGE_KEY = "sp_news_demo_v1";
 
 export default function NewsDemo() {
-  const [items, setItems] = useState([]);
+  // ✅ Lazy init: read once from localStorage (or seed), no setState inside effect
+  const [items, setItems] = useState(() => {
+    if (typeof window === "undefined") return initialNewsItems;
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : initialNewsItems;
+    } catch {
+      return initialNewsItems;
+    }
+  });
+
   const [admin, setAdmin] = useState(false);
   const [filter, setFilter] = useState("all"); // all | blog | coupon
   const [q, setQ] = useState("");
@@ -19,20 +29,12 @@ export default function NewsDemo() {
     expiresAt: "",
   });
 
-  // Load from localStorage or seed
+  // ✅ Only sync OUT to localStorage when items change
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        setItems(JSON.parse(raw));
-      } else {
-        setItems(initialNewsItems);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(initialNewsItems));
-      }
-    } catch {
-      setItems(initialNewsItems);
-    }
-  }, []);
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    } catch {}
+  }, [items]);
 
   // Derived list
   const visible = useMemo(() => {
@@ -49,9 +51,7 @@ export default function NewsDemo() {
 
   function save(next) {
     setItems(next);
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    } catch {}
+    // localStorage write is handled by the effect above
   }
 
   function resetAll() {
@@ -171,9 +171,7 @@ export default function NewsDemo() {
                 )}
                 <button
                   className="mt-3 text-sm underline underline-offset-4 hover:opacity-80"
-                  onClick={() =>
-                    navigator.clipboard.writeText(it.code || "")
-                  }
+                  onClick={() => navigator.clipboard.writeText(it.code || "")}
                 >
                   Copy code
                 </button>

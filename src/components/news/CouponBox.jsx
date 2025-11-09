@@ -5,7 +5,9 @@ import { useEffect, useMemo, useState } from "react";
 
 export default function CouponBox({ code, expiresAt, cta = "Redeem", link = "#" }) {
   const [copied, setCopied] = useState(false);
-  const [now, setNow] = useState(Date.now());
+
+  // ✅ Lazy initializer keeps render pure (no impure Date.now() at render)
+  const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
