@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "cf:build": "npx @cloudflare/next-on-pages --outdir .vercel/output"
+    "cf:build": "opennextjs-cloudflare build",
+    "cf:preview": "wrangler pages dev .open-next/assets",
+    "cf:deploy": "wrangler pages deploy .open-next/assets"
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.19",
@@ -17,7 +19,7 @@
     "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "1.13.16",
+    "@opennextjs/cloudflare":"1.11.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

@@ -1,16 +1,15 @@
 {
-  "/_global-error/page": "/_global-error",
-  "/_not-found/page": "/_not-found",
-  "/api/badge/route": "/api/badge",
   "/api/badge/svg/route": "/api/badge/svg",
-  "/api/badge/track/route": "/api/badge/track",
+  "/_not-found/page": "/_not-found",
   "/favicon.ico/route": "/favicon.ico",
-  "/features/csv-dashboard/page": "/features/csv-dashboard",
-  "/features/leaderboard/page": "/features/leaderboard",
-  "/features/live-badge/page": "/features/live-badge",
+  "/api/badge/route": "/api/badge",
+  "/api/badge/track/route": "/api/badge/track",
   "/features/news/[slug]/page": "/features/news/[slug]",
-  "/features/news/page": "/features/news",
-  "/features/page": "/features",
   "/page": "/",
-  "/projects/page": "/projects"
+  "/features/leaderboard/page": "/features/leaderboard",
+  "/features/csv-dashboard/page": "/features/csv-dashboard",
+  "/features/live-badge/page": "/features/live-badge",
+  "/features/news/page": "/features/news",
+  "/projects/page": "/projects",
+  "/features/page": "/features"
 }
