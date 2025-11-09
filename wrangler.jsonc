@@ -1,9 +1,17 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
+  "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "stickypicky",
-  "main": ".open-next/worker.js",
-  "compatibility_date": "2025-09-23",
-  "compatibility_flags": ["nodejs_compat"],
-  // lets `wrangler dev/preview` also serve OpenNext’s built assets
-  "assets": { "directory": ".open-next/assets" }
+  // This points Pages to your static assets folder produced by OpenNext:
+  "pages_build_output_dir": ".open-next/assets",
+
+  // (Optional but recommended)
+  "compatibility_date": "2025-11-09",
+
+  // Example: environment variables or bindings, if you need them:
+  "vars": {
+    "NEXT_PUBLIC_SITE_URL": "https://stickypicky.pages.dev",
+    "CLOUDFLARE_ACCOUNT_ID":"92f39cd5fe75d436e55c83ec4b9513f1",
+    "CLOUDFLARE_API_TOKEN":"BVdtqTHxf4XV422dx77IehgTOYN4pcgBPHbUPcr-",
+    "PAGES_PROJECT_NAME":"stickypicky"  
+  }
 }
