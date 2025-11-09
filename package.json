@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "build:open": "opennextjs-cloudflare build",
+    "cf:build": "opennextjs-cloudflare build && node scripts/copy-worker.cjs",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare upload --pages",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "lint": "eslint"
