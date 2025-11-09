@@ -1,15 +1,15 @@
 {
-  "/api/badge/svg/route": "app/api/badge/svg/route.js",
   "/_not-found/page": "app/_not-found/page.js",
+  "/api/badge/svg/route": "app/api/badge/svg/route.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/api/badge/route": "app/api/badge/route.js",
   "/api/badge/track/route": "app/api/badge/track/route.js",
+  "/api/badge/route": "app/api/badge/route.js",
   "/features/news/[slug]/page": "app/features/news/[slug]/page.js",
-  "/page": "app/page.js",
-  "/features/leaderboard/page": "app/features/leaderboard/page.js",
   "/features/csv-dashboard/page": "app/features/csv-dashboard/page.js",
+  "/page": "app/page.js",
   "/features/live-badge/page": "app/features/live-badge/page.js",
   "/features/news/page": "app/features/news/page.js",
+  "/features/leaderboard/page": "app/features/leaderboard/page.js",
   "/projects/page": "app/projects/page.js",
   "/features/page": "app/features/page.js"
 }

@@ -1,15 +1,15 @@
 {
-  "/api/badge/svg/route": "/api/badge/svg",
   "/_not-found/page": "/_not-found",
+  "/api/badge/svg/route": "/api/badge/svg",
   "/favicon.ico/route": "/favicon.ico",
-  "/api/badge/route": "/api/badge",
   "/api/badge/track/route": "/api/badge/track",
+  "/api/badge/route": "/api/badge",
   "/features/news/[slug]/page": "/features/news/[slug]",
-  "/page": "/",
-  "/features/leaderboard/page": "/features/leaderboard",
   "/features/csv-dashboard/page": "/features/csv-dashboard",
+  "/page": "/",
   "/features/live-badge/page": "/features/live-badge",
   "/features/news/page": "/features/news",
+  "/features/leaderboard/page": "/features/leaderboard",
   "/projects/page": "/projects",
   "/features/page": "/features"
 }

@@ -1,11 +1,16 @@
-// copies the compiled worker to Pages' assets root
+// Ensure the Pages runtime worker is present at .open-next/assets/_worker.js
 const fs = require("fs");
 const path = require("path");
 
-const src = path.join(".open-next", "worker.js");
-const outDir = path.join(".open-next", "assets");
-const dst = path.join(outDir, "_worker.js");
+const from = path.resolve(".open-next/worker.js");
+const toDir = path.resolve(".open-next/assets");
+const to = path.join(toDir, "_worker.js");
 
-fs.mkdirSync(outDir, { recursive: true });
-fs.copyFileSync(src, dst);
-console.log(`Copied ${src} -> ${dst}`);
+if (!fs.existsSync(from)) {
+  console.error("OpenNext worker not found at", from);
+  process.exit(1);
+}
+
+fs.mkdirSync(toDir, { recursive: true });
+fs.copyFileSync(from, to);
+console.log("✅ Copied worker to", to);
