@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --webpack",
-    "build": "npx @cloudflare/next-on-pages@latest build",
+    "dev": "next dev",
+    "build": "npx @cloudflare/next-on-pages@latest",
     "start": "next start",
     "lint": "eslint"
   },
