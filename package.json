@@ -10,7 +10,7 @@
     "build:next": "next build",
     "dev": "next dev",
     "start": "next start",
-    "git": "git add . && git commit -m 'update' && git push"
+    "git": "git add . && git commit -m 'update' && git push origin main"
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.19",
