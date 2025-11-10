@@ -1,6 +1,34 @@
 // tailwind.config.ts (or .js)
 export default {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
-  theme: {},
-  plugins: [],
+  theme: {
+    extend: {
+      colors: {
+        primary: "var(--color-primary)",
+        accent:  "var(--color-accent)",
+        bg:      "var(--color-bg)",
+        card:    "var(--color-card)",
+        fg:      "var(--color-fg)",
+        muted:   "var(--color-muted)",
+        navbg:   "var(--color-nav-bg)",
+        navfg:   "var(--color-nav-fg)",
+        success: "var(--color-success)",
+        danger:  "var(--color-danger)",
+        warning: "var(--color-warning)"
+      },
+      borderRadius: {
+        sm: "var(--radius-sm)",
+        DEFAULT: "var(--radius-md)",
+        md: "var(--radius-md)",
+        lg: "var(--radius-lg)",
+        xl: "var(--radius-xl)"
+      },
+      boxShadow: {
+        sm: "var(--shadow-sm)",
+        md: "var(--shadow-md)",
+        lg: "var(--shadow-lg)"
+      }
+    }
+  },
+  plugins: []
 };
