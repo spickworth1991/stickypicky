@@ -1,5 +1,7 @@
+// scripts/copy-worker.cjs
 // Mirror the OpenNext worker + runtime deps into the Pages assets dir
-// AND ensure public assets, _headers, and _next/static are present.
+// AND ensure Next static assets + public/ are present in the final output.
+// Also copy _headers to the output root for Cloudflare Pages.
 
 const fs = require("fs");
 const path = require("path");
@@ -8,45 +10,31 @@ const root = process.cwd();
 const fromBase = path.resolve(root, ".open-next");
 const toBase = path.resolve(root, ".open-next", "assets");
 
-function ensureDir(p) {
-  fs.mkdirSync(p, { recursive: true });
-}
-function copyFile(from, to) {
-  if (!fs.existsSync(from)) {
-    console.error("❌ Missing file:", from);
-    process.exit(1);
-  }
-  ensureDir(path.dirname(to));
-  fs.copyFileSync(from, to);
-  console.log("✅ Copied file:", to);
-}
-function copyDir(from, to) {
-  if (!fs.existsSync(from)) {
+// Utility helpers
+const exists = p => fs.existsSync(p);
+const ensureDir = p => fs.mkdirSync(path.dirname(p), { recursive: true });
+const copyDir = (from, to) => {
+  if (!exists(from)) {
     console.log("↪︎ (skip) dir not found:", from);
     return false;
   }
-  ensureDir(path.dirname(to));
+  fs.mkdirSync(to, { recursive: true });
   fs.cpSync(from, to, { recursive: true, force: true });
   console.log("✅ Copied dir :", to);
   return true;
-}
-function mergeDirContents(from, to) {
-  if (!fs.existsSync(from)) return false;
-  ensureDir(to);
-  for (const entry of fs.readdirSync(from, { withFileTypes: true })) {
-    const src = path.join(from, entry.name);
-    const dst = path.join(to, entry.name);
-    if (entry.isDirectory()) {
-      copyDir(src, dst);
-    } else {
-      copyFile(src, dst);
-    }
+};
+const copyFile = (from, to) => {
+  if (!exists(from)) {
+    console.error("❌ Missing file:", from);
+    process.exit(1);
   }
-  return true;
-}
+  ensureDir(to);
+  fs.copyFileSync(from, to);
+  console.log("✅ Copied file:", to);
+};
 
-// 1) Worker + runtime that _worker.js imports
-const NEEDS = [
+// 1) Copy the OpenNext worker + runtime deps that it imports
+const NEEDED = [
   { type: "file", from: path.join(fromBase, "worker.js"), to: path.join(toBase, "_worker.js") },
   { type: "dir",  from: path.join(fromBase, "cloudflare"),        to: path.join(toBase, "cloudflare") },
   { type: "dir",  from: path.join(fromBase, "middleware"),        to: path.join(toBase, "middleware") },
@@ -54,30 +42,64 @@ const NEEDS = [
   { type: "dir",  from: path.join(fromBase, "server-functions"),  to: path.join(toBase, "server-functions") },
 ];
 
-for (const item of NEEDS) {
+for (const item of NEEDED) {
   if (item.type === "file") copyFile(item.from, item.to);
   else copyDir(item.from, item.to);
 }
 
-// 2) Copy public/ into the **root** of assets so /foo.jpg is accessible as /foo.jpg
-const publicDir = path.join(root, "public");
-if (mergeDirContents(publicDir, toBase)) {
-  console.log("✅ Merged public/ into .open-next/assets");
+// 2) Copy Next’s static output so URLs like /_next/static/css/*.css resolve
+const nextStaticSrc = path.join(root, ".next", "static");
+const nextStaticDest = path.join(toBase, "_next", "static");
+const copiedNextStatic = copyDir(nextStaticSrc, nextStaticDest);
+if (!copiedNextStatic) {
+  console.warn("⚠️  .next/static not found. If CSS 404s, this is why.");
 } else {
-  console.log("ℹ️ No public/ dir to merge");
+  // sanity: list a couple of files if present
+  try {
+    const cssDir = path.join(nextStaticDest, "css");
+    if (exists(cssDir)) {
+      const sample = (fs.readdirSync(cssDir) || []).slice(0, 5);
+      console.log("ℹ️  static/css files:", sample);
+    } else {
+      console.warn("⚠️  No /_next/static/css directory after copy.");
+    }
+  } catch {}
 }
 
-// 3) Ensure _headers at the output root (strip CRLF & guarantee newline)
-(function ensureHeaders() {
-  const candidates = [path.join(root, "public", "_headers"), path.join(root, "_headers")];
+// 3) Copy public/* into the output so /hero-shot.png, /og/*, etc. are served
+const publicSrc = path.join(root, "public");
+const copiedPublic = copyDir(publicSrc, toBase);
+if (!copiedPublic) {
+  console.log("ℹ️ No public/ directory found — skipping.");
+}
+
+// 4) Copy _headers to the output root (prefer public/_headers, otherwise project root)
+(function ensureHeadersAtAssetsRoot() {
+  const candidates = [
+    path.join(publicSrc, "_headers"),
+    path.join(root, "_headers"),
+  ];
   const dest = path.join(toBase, "_headers");
+
   let src = null;
-  for (const c of candidates) if (fs.existsSync(c)) { src = c; break; }
-  if (!src) return console.log("ℹ️ No _headers found");
+  for (const c of candidates) {
+    if (exists(c)) {
+      src = c;
+      break;
+    }
+  }
+
+  if (!src) {
+    console.log("ℹ️ No _headers file found in public/ or project root — skipping.");
+    return;
+  }
+
   try {
-    let text = fs.readFileSync(src, "utf8").replace(/\r\n/g, "\n");
+    let text = fs.readFileSync(src, "utf8");
+    // Cloudflare Pages expects plain text; normalize endings and ensure trailing newline
+    text = text.replace(/\r\n/g, "\n");
     if (!text.endsWith("\n")) text += "\n";
-    ensureDir(path.dirname(dest));
+    ensureDir(dest);
     fs.writeFileSync(dest, text, "utf8");
     console.log("✅ Copied _headers to .open-next/assets/_headers");
   } catch (e) {
@@ -85,45 +107,12 @@ if (mergeDirContents(publicDir, toBase)) {
   }
 })();
 
-// 4) Make sure the Next static bundle is present at .open-next/assets/_next/static
-(function ensureNextStatic() {
-  const destStatic = path.join(toBase, "_next", "static");
-  if (fs.existsSync(destStatic)) {
-    console.log("✅ _next/static already present");
-    return;
-  }
-
-  // Attempt sources in order of likelihood:
-  const sources = [
-    path.join(fromBase, "_next", "static"),   // OpenNext sometimes emits this
-    path.join(root, ".next", "static"),       // Next.js default
-  ];
-
-  for (const src of sources) {
-    if (fs.existsSync(src)) {
-      copyDir(src, destStatic);
-      break;
-    }
-  }
-
-  if (!fs.existsSync(destStatic)) {
-    console.warn("⚠️ Could not find a source for _next/static. CSS may 404.");
-  } else {
-    // quick check for css presence
-    const cssDir = path.join(destStatic, "css");
-    if (!fs.existsSync(cssDir)) {
-      console.warn("⚠️ _next/static present, but no css/ directory yet. If pages reference a css hash that isn't here, purge cache & redeploy.");
-    }
-  }
-})();
-
-// 5) Friendly sanity messages
-const mustExist = [
+// 5) Sanity checks for the most common imports
+[
   path.join(toBase, "_worker.js"),
-  path.join(toBase, "_next", "static"),
-];
-for (const p of mustExist) {
-  if (!fs.existsSync(p)) console.warn("⚠️ Not found (may be ok depending on features):", p);
-}
+  path.join(toBase, "server-functions", "default", "handler.mjs"),
+].forEach(p => {
+  if (!exists(p)) console.warn("⚠️  Not found (may be OK if not imported):", p);
+});
 
 console.log("✅ Mirror step complete.");
