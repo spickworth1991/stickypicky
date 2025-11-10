@@ -67,4 +67,25 @@ for (const p of mustExist) {
     console.warn("⚠️  Not found (may be OK if not imported in this build):", p);
   }
 }
+
+// Ensure _headers is copied to the output root for Cloudflare Pages
+const fs = require("fs");
+const path = require("path");
+
+try {
+  const outDir = path.join(".open-next", "assets");
+  const src = path.join("public", "_headers");
+  const dst = path.join(outDir, "_headers");
+
+  if (fs.existsSync(src)) {
+    fs.copyFileSync(src, dst);
+    console.log("✅ Copied _headers to .open-next/assets/_headers");
+  } else {
+    console.log("ℹ️ No public/_headers found to copy");
+  }
+} catch (e) {
+  console.warn("⚠️ Failed to copy _headers:", e?.message || e);
+}
+
+
 console.log("✅ Mirror step complete.");
