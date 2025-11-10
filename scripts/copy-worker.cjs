@@ -1,118 +1,132 @@
 // scripts/copy-worker.cjs
-// Mirror the OpenNext worker + runtime deps into the Pages assets dir
-// AND ensure Next static assets + public/ are present in the final output.
-// Also copy _headers to the output root for Cloudflare Pages.
+// Mirrors the OpenNext build into the Pages deploy dir and brings along /public.
+// Usage: runs after `opennextjs-cloudflare build`
+// Output deploy dir: .open-next/assets
 
 const fs = require("fs");
 const path = require("path");
 
 const root = process.cwd();
-const fromBase = path.resolve(root, ".open-next");
-const toBase = path.resolve(root, ".open-next", "assets");
+const openNextDir = path.resolve(root, ".open-next");
+const toDir = path.join(openNextDir, "assets");
 
-// Utility helpers
-const exists = p => fs.existsSync(p);
-const ensureDir = p => fs.mkdirSync(path.dirname(p), { recursive: true });
-const copyDir = (from, to) => {
-  if (!exists(from)) {
-    console.log("↪︎ (skip) dir not found:", from);
-    return false;
+function exists(p) {
+  try { return fs.existsSync(p); } catch { return false; }
+}
+function ensureDirFor(filePath) {
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+}
+function copyFile(src, dest) {
+  ensureDirFor(dest);
+  fs.copyFileSync(src, dest);
+}
+function copyDir(src, dest) {
+  if (!exists(src)) return;
+  const stat = fs.statSync(src);
+  if (!stat.isDirectory()) {
+    copyFile(src, dest);
+    return;
   }
-  fs.mkdirSync(to, { recursive: true });
-  fs.cpSync(from, to, { recursive: true, force: true });
-  console.log("✅ Copied dir :", to);
-  return true;
-};
-const copyFile = (from, to) => {
-  if (!exists(from)) {
-    console.error("❌ Missing file:", from);
+  fs.mkdirSync(dest, { recursive: true });
+  for (const entry of fs.readdirSync(src)) {
+    const s = path.join(src, entry);
+    const d = path.join(dest, entry);
+    const st = fs.statSync(s);
+    if (st.isDirectory()) {
+      copyDir(s, d);
+    } else if (st.isFile()) {
+      copyFile(s, d);
+    } // ignore symlinks for Pages
+  }
+}
+
+function logCopy(src, dest) {
+  console.log(`→ Copy ${path.relative(root, src)} -> ${path.relative(root, dest)}`);
+}
+
+(function main() {
+  if (!exists(openNextDir)) {
+    console.error("❌ .open-next not found. Run `opennextjs-cloudflare build` first.");
     process.exit(1);
   }
-  ensureDir(to);
-  fs.copyFileSync(from, to);
-  console.log("✅ Copied file:", to);
-};
+  fs.mkdirSync(toDir, { recursive: true });
 
-// 1) Copy the OpenNext worker + runtime deps that it imports
-const NEEDED = [
-  { type: "file", from: path.join(fromBase, "worker.js"), to: path.join(toBase, "_worker.js") },
-  { type: "dir",  from: path.join(fromBase, "cloudflare"),        to: path.join(toBase, "cloudflare") },
-  { type: "dir",  from: path.join(fromBase, "middleware"),        to: path.join(toBase, "middleware") },
-  { type: "dir",  from: path.join(fromBase, ".build"),            to: path.join(toBase, ".build") },
-  { type: "dir",  from: path.join(fromBase, "server-functions"),  to: path.join(toBase, "server-functions") },
-];
+  // 1) Copy the worker (so Pages uses this as the Functions/Worker entry)
+  const workerSrc = path.join(openNextDir, "worker.js");
+  const workerDest = path.join(toDir, "_worker.js");
+  if (exists(workerSrc)) {
+    logCopy(workerSrc, workerDest);
+    copyFile(workerSrc, workerDest);
+  } else {
+    console.warn("⚠️  Missing .open-next/worker.js (OpenNext build may have failed?)");
+  }
 
-for (const item of NEEDED) {
-  if (item.type === "file") copyFile(item.from, item.to);
-  else copyDir(item.from, item.to);
-}
+  // 2) Mirror server functions into the assets tree (CF Pages Functions)
+  const serverFnsSrc = path.join(openNextDir, "server-functions");
+  const serverFnsDest = path.join(toDir, "server-functions");
+  if (exists(serverFnsSrc)) {
+    logCopy(serverFnsSrc, serverFnsDest);
+    copyDir(serverFnsSrc, serverFnsDest);
+  } else {
+    console.warn("⚠️  Missing .open-next/server-functions (are you using the app router?)");
+  }
 
-// 2) Copy Next’s static output so URLs like /_next/static/css/*.css resolve
-const nextStaticSrc = path.join(root, ".next", "static");
-const nextStaticDest = path.join(toBase, "_next", "static");
-const copiedNextStatic = copyDir(nextStaticSrc, nextStaticDest);
-if (!copiedNextStatic) {
-  console.warn("⚠️  .next/static not found. If CSS 404s, this is why.");
-} else {
-  // sanity: list a couple of files if present
-  try {
-    const cssDir = path.join(nextStaticDest, "css");
-    if (exists(cssDir)) {
-      const sample = (fs.readdirSync(cssDir) || []).slice(0, 5);
-      console.log("ℹ️  static/css files:", sample);
-    } else {
-      console.warn("⚠️  No /_next/static/css directory after copy.");
+  // 3) Ensure anything already in .open-next/assets stays (OpenNext puts static/public here)
+  // Nothing to do; we just merge more content into `toDir`.
+
+  // 4) NEW: Recursively copy your entire /public into the deploy root
+  // This makes /public/og/foo.jpg available as /og/foo.jpg at runtime.
+  const publicSrc = path.join(root, "public");
+  if (exists(publicSrc)) {
+    console.log("📦 Mirroring /public into .open-next/assets …");
+    // Copy into the root of assets, not nested under "public"
+    for (const entry of fs.readdirSync(publicSrc)) {
+      const s = path.join(publicSrc, entry);
+      const d = path.join(toDir, entry);
+      logCopy(s, d);
+      const st = fs.statSync(s);
+      if (st.isDirectory()) copyDir(s, d);
+      else if (st.isFile()) copyFile(s, d);
     }
-  } catch {}
-}
+  } else {
+    console.warn("⚠️  No /public directory found to mirror.");
+  }
 
-// 3) Copy public/* into the output so /hero-shot.png, /og/*, etc. are served
-const publicSrc = path.join(root, "public");
-const copiedPublic = copyDir(publicSrc, toBase);
-if (!copiedPublic) {
-  console.log("ℹ️ No public/ directory found — skipping.");
-}
-
-// 4) Copy _headers to the output root (prefer public/_headers, otherwise project root)
-(function ensureHeadersAtAssetsRoot() {
-  const candidates = [
+  // 5) Copy optional _headers (either from /public/_headers or repo root _headers)
+  // Pages will read it from the deploy root.
+  const headersCandidates = [
     path.join(publicSrc, "_headers"),
     path.join(root, "_headers"),
   ];
-  const dest = path.join(toBase, "_headers");
-
-  let src = null;
-  for (const c of candidates) {
-    if (exists(c)) {
-      src = c;
+  for (const candidate of headersCandidates) {
+    if (exists(candidate)) {
+      const dest = path.join(toDir, "_headers");
+      logCopy(candidate, dest);
+      copyFile(candidate, dest);
       break;
     }
   }
 
-  if (!src) {
-    console.log("ℹ️ No _headers file found in public/ or project root — skipping.");
-    return;
+  // 6) (Optional best-effort) Bring across any .next/static if OpenNext left it around
+  // This helps when CSS/JS assets end up under .next/static in certain toolchains.
+  const nextStaticA = path.join(root, ".next", "static");
+  const nextStaticB = path.join(openNextDir, ".next", "static"); // rare
+  const nextStaticDest = path.join(toDir, "_next", "static");
+  if (exists(nextStaticA)) {
+    logCopy(nextStaticA, nextStaticDest);
+    copyDir(nextStaticA, nextStaticDest);
+  } else if (exists(nextStaticB)) {
+    logCopy(nextStaticB, nextStaticDest);
+    copyDir(nextStaticB, nextStaticDest);
   }
 
-  try {
-    let text = fs.readFileSync(src, "utf8");
-    // Cloudflare Pages expects plain text; normalize endings and ensure trailing newline
-    text = text.replace(/\r\n/g, "\n");
-    if (!text.endsWith("\n")) text += "\n";
-    ensureDir(dest);
-    fs.writeFileSync(dest, text, "utf8");
-    console.log("✅ Copied _headers to .open-next/assets/_headers");
-  } catch (e) {
-    console.warn("⚠️ Failed to copy _headers:", e?.message || e);
-  }
+  // 7) Sanity pings
+  [
+    path.join(toDir, "_worker.js"),
+    path.join(toDir, "server-functions", "default", "handler.mjs"),
+  ].forEach(p => {
+    if (!exists(p)) console.warn("⚠️  Not found (may be fine depending on your app):", p);
+  });
+
+  console.log("✅ Copy complete. Deploy with: wrangler pages deploy .open-next/assets");
 })();
-
-// 5) Sanity checks for the most common imports
-[
-  path.join(toBase, "_worker.js"),
-  path.join(toBase, "server-functions", "default", "handler.mjs"),
-].forEach(p => {
-  if (!exists(p)) console.warn("⚠️  Not found (may be OK if not imported):", p);
-});
-
-console.log("✅ Mirror step complete.");
