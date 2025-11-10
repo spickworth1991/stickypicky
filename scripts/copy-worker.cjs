@@ -1,7 +1,6 @@
 // scripts/copy-worker.cjs
-// Mirrors the OpenNext build into the Pages deploy dir and brings along /public.
+// Mirror OpenNext output + bring along /public and all worker deps
 // Usage: runs after `opennextjs-cloudflare build`
-// Output deploy dir: .open-next/assets
 
 const fs = require("fs");
 const path = require("path");
@@ -10,36 +9,22 @@ const root = process.cwd();
 const openNextDir = path.resolve(root, ".open-next");
 const toDir = path.join(openNextDir, "assets");
 
-function exists(p) {
-  try { return fs.existsSync(p); } catch { return false; }
-}
-function ensureDirFor(filePath) {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-}
-function copyFile(src, dest) {
-  ensureDirFor(dest);
-  fs.copyFileSync(src, dest);
-}
+function exists(p) { try { return fs.existsSync(p); } catch { return false; } }
+function ensureDirFor(filePath) { fs.mkdirSync(path.dirname(filePath), { recursive: true }); }
+function copyFile(src, dest) { ensureDirFor(dest); fs.copyFileSync(src, dest); }
 function copyDir(src, dest) {
   if (!exists(src)) return;
   const stat = fs.statSync(src);
-  if (!stat.isDirectory()) {
-    copyFile(src, dest);
-    return;
-  }
+  if (!stat.isDirectory()) { copyFile(src, dest); return; }
   fs.mkdirSync(dest, { recursive: true });
   for (const entry of fs.readdirSync(src)) {
     const s = path.join(src, entry);
     const d = path.join(dest, entry);
     const st = fs.statSync(s);
-    if (st.isDirectory()) {
-      copyDir(s, d);
-    } else if (st.isFile()) {
-      copyFile(s, d);
-    } // ignore symlinks for Pages
+    if (st.isDirectory()) copyDir(s, d);
+    else if (st.isFile()) copyFile(s, d);
   }
 }
-
 function logCopy(src, dest) {
   console.log(`→ Copy ${path.relative(root, src)} -> ${path.relative(root, dest)}`);
 }
@@ -51,35 +36,36 @@ function logCopy(src, dest) {
   }
   fs.mkdirSync(toDir, { recursive: true });
 
-  // 1) Copy the worker (so Pages uses this as the Functions/Worker entry)
+  // 1) Core worker
   const workerSrc = path.join(openNextDir, "worker.js");
   const workerDest = path.join(toDir, "_worker.js");
-  if (exists(workerSrc)) {
-    logCopy(workerSrc, workerDest);
-    copyFile(workerSrc, workerDest);
-  } else {
-    console.warn("⚠️  Missing .open-next/worker.js (OpenNext build may have failed?)");
+  if (exists(workerSrc)) { logCopy(workerSrc, workerDest); copyFile(workerSrc, workerDest); }
+  else console.warn("⚠️ Missing .open-next/worker.js");
+
+  // 2) Worker runtime deps (these are what your error log complained about)
+  const deps = [
+    // keep same relative layout as in .open-next so imports resolve
+    ["cloudflare", "cloudflare"],
+    ["middleware", "middleware"],
+    [".build/durable-objects", ".build/durable-objects"],
+  ];
+  for (const [relSrc, relDest] of deps) {
+    const src = path.join(openNextDir, relSrc);
+    const dest = path.join(toDir, relDest);
+    if (exists(src)) { logCopy(src, dest); copyDir(src, dest); }
+    else console.warn(`⚠️ Missing .open-next/${relSrc} (may be fine depending on build)`);
   }
 
-  // 2) Mirror server functions into the assets tree (CF Pages Functions)
+  // 3) Server functions (CF Pages Functions)
   const serverFnsSrc = path.join(openNextDir, "server-functions");
   const serverFnsDest = path.join(toDir, "server-functions");
-  if (exists(serverFnsSrc)) {
-    logCopy(serverFnsSrc, serverFnsDest);
-    copyDir(serverFnsSrc, serverFnsDest);
-  } else {
-    console.warn("⚠️  Missing .open-next/server-functions (are you using the app router?)");
-  }
+  if (exists(serverFnsSrc)) { logCopy(serverFnsSrc, serverFnsDest); copyDir(serverFnsSrc, serverFnsDest); }
+  else console.warn("⚠️ Missing .open-next/server-functions");
 
-  // 3) Ensure anything already in .open-next/assets stays (OpenNext puts static/public here)
-  // Nothing to do; we just merge more content into `toDir`.
-
-  // 4) NEW: Recursively copy your entire /public into the deploy root
-  // This makes /public/og/foo.jpg available as /og/foo.jpg at runtime.
+  // 4) Public assets at the deploy root
   const publicSrc = path.join(root, "public");
   if (exists(publicSrc)) {
     console.log("📦 Mirroring /public into .open-next/assets …");
-    // Copy into the root of assets, not nested under "public"
     for (const entry of fs.readdirSync(publicSrc)) {
       const s = path.join(publicSrc, entry);
       const d = path.join(toDir, entry);
@@ -88,45 +74,31 @@ function logCopy(src, dest) {
       if (st.isDirectory()) copyDir(s, d);
       else if (st.isFile()) copyFile(s, d);
     }
-  } else {
-    console.warn("⚠️  No /public directory found to mirror.");
-  }
+  } else console.warn("⚠️ No /public directory found to mirror.");
 
-  // 5) Copy optional _headers (either from /public/_headers or repo root _headers)
-  // Pages will read it from the deploy root.
-  const headersCandidates = [
-    path.join(publicSrc, "_headers"),
-    path.join(root, "_headers"),
-  ];
+  // 5) _headers (either in /public or repo root) → deploy root
+  const headersCandidates = [path.join(publicSrc, "_headers"), path.join(root, "_headers")];
   for (const candidate of headersCandidates) {
-    if (exists(candidate)) {
-      const dest = path.join(toDir, "_headers");
-      logCopy(candidate, dest);
-      copyFile(candidate, dest);
-      break;
-    }
+    if (exists(candidate)) { const dest = path.join(toDir, "_headers"); logCopy(candidate, dest); copyFile(candidate, dest); break; }
   }
 
-  // 6) (Optional best-effort) Bring across any .next/static if OpenNext left it around
-  // This helps when CSS/JS assets end up under .next/static in certain toolchains.
-  const nextStaticA = path.join(root, ".next", "static");
-  const nextStaticB = path.join(openNextDir, ".next", "static"); // rare
+  // 6) Best-effort: copy any .next/static assets (helps with CSS/JS not emitted by OpenNext)
+  const nextStaticCandidates = [
+    path.join(root, ".next", "static"),
+    path.join(openNextDir, ".next", "static"),
+  ];
   const nextStaticDest = path.join(toDir, "_next", "static");
-  if (exists(nextStaticA)) {
-    logCopy(nextStaticA, nextStaticDest);
-    copyDir(nextStaticA, nextStaticDest);
-  } else if (exists(nextStaticB)) {
-    logCopy(nextStaticB, nextStaticDest);
-    copyDir(nextStaticB, nextStaticDest);
+  for (const cand of nextStaticCandidates) {
+    if (exists(cand)) { logCopy(cand, nextStaticDest); copyDir(cand, nextStaticDest); break; }
   }
 
-  // 7) Sanity pings
+  // 7) Sanity hints
   [
     path.join(toDir, "_worker.js"),
-    path.join(toDir, "server-functions", "default", "handler.mjs"),
-  ].forEach(p => {
-    if (!exists(p)) console.warn("⚠️  Not found (may be fine depending on your app):", p);
-  });
+    path.join(toDir, "cloudflare"),
+    path.join(toDir, "middleware"),
+    path.join(toDir, ".build", "durable-objects"),
+  ].forEach(p => { if (!exists(p)) console.warn("ℹ️ Not found (may be fine):", path.relative(root, p)); });
 
   console.log("✅ Copy complete. Deploy with: wrangler pages deploy .open-next/assets");
 })();
