@@ -1,5 +1,4 @@
 import "./globals.css";
-import { Inter } from "next/font/google";
 import Link from "next/link";
 
 
@@ -20,11 +19,9 @@ export const metadata = {
   icons: { icon: "/favicon.ico", apple: "/apple-touch-icon.png" },
 };
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
-
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${inter.variable} scroll-smooth`}>
+    <html lang="en" className="antialiased">
       <body className="font-sans bg-bg text-fg antialiased">
         {/* Top nav */}
         <header className="sticky top-0 z-50 border-b border-white/10 bg-bg/70 backdrop-blur">
