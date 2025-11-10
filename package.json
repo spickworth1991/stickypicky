@@ -9,7 +9,9 @@
     "cf:deploy": "wrangler pages deploy .open-next/assets",
     "build:next": "next build",
     "dev": "next dev",
-    "start": "next start"
+    "start": "next start",
+    "git": "git add . && git commit -m 'update' && git push"
+    
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.19",
