@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSnapshot } from "@/lib/badgeStore";
+export const runtime = 'edge';
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url);

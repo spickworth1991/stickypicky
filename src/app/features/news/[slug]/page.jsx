@@ -4,7 +4,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { getNews } from "@/lib/newsData";
 import CouponBox from "@/components/news/CouponBox";
-
+export const runtime = 'edge';
 export function generateMetadata({ params, searchParams }) {
   const preview = searchParams?.preview === "1";
   const post = getNews(params.slug, { preview });

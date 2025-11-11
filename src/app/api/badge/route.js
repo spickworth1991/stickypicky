@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSnapshot, increment, setCount } from "@/lib/badgeStore";
-
+export const runtime = 'edge';
 export const dynamic = "force-dynamic";
 
 export async function GET() {
