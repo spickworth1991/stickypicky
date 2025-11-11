@@ -10,6 +10,7 @@
     "build:next": "next build",
     "dev": "next dev",
     "start": "next start",
+    "build:css": "tailwindcss -i ./src/app/globals.css -o ./public/app.css --minify",
     "git": "git add . && git commit -m 'update' && git push origin main"
   },
   "dependencies": {
