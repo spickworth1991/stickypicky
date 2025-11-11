@@ -159,7 +159,6 @@ export default function Badge_${key}() {
             height={1}
             style={{ position: "absolute", left: -9999 }}
           />
-            <img src="/api/badge/svg?key=views&label=Views&color=%2322d3ee" alt="Views" />
           <span className="text-xs text-muted">Counts a view on each page load.</span>
         </div>
         <div className="grid gap-2">
