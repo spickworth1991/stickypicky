@@ -1,10 +1,11 @@
+export const runtime = 'edge';
+
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import Markdown from "@/components/Markdown";
 import { getNews } from "@/lib/newsData";
 import CouponBox from "@/components/news/CouponBox";
-export const runtime = 'edge';
+
 export function generateMetadata({ params, searchParams }) {
   const preview = searchParams?.preview === "1";
   const post = getNews(params.slug, { preview });
@@ -56,9 +57,7 @@ export default function NewsPostPage({ params, searchParams }) {
         )}
 
         <article className="prose prose-invert max-w-none">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {post.content}
-          </ReactMarkdown>
+          <Markdown>{post.content}</Markdown>
         </article>
       </div>
     </section>

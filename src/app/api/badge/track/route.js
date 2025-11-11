@@ -1,6 +1,7 @@
+export const runtime = 'edge';
+
 import { NextResponse } from "next/server";
 import { increment } from "@/lib/badgeStore";
-export const runtime = 'edge';
 
 export const dynamic = "force-dynamic";
 
