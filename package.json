@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "cf:build": "opennextjs-cloudflare build && node scripts/copy-worker.cjs",
+    "cf:build": "npm run build:css && opennextjs-cloudflare build && node scripts/copy-worker.cjs",
     "cf:preview": "wrangler pages dev .open-next/assets",
     "cf:deploy": "wrangler pages deploy .open-next/assets",
     "build:next": "next build",
