@@ -165,7 +165,6 @@ export default function Badge_${key}() {
         <div className="grid gap-2">
           <div className="text-sm text-muted">Drop this 1×1 pixel anywhere on a page:</div>
           <pre className="p-3 overflow-x-auto text-xs leading-relaxed rounded border border-white/10 bg-black/40">
-            <code>{`<img src="/api/badge/track?key=views" alt="" width="1" height="1" style="position:absolute;left:-9999px;" />`}</code>
           </pre>
           <div className="text-sm text-muted">
             Then embed the badge: 

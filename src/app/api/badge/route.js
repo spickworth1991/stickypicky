@@ -1,32 +1,15 @@
+import { NextResponse } from "next/server";
+import { getRequestContext } from "@cloudflare/next-on-pages";
+import { getSnapshotKV } from "@/lib/badgeKV";
+
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-import { NextResponse } from "next/server";
-import { getSnapshot, increment, setCount } from "@/lib/badgeStore";
-
 export async function GET() {
-  const snap = await getSnapshot();
-  return NextResponse.json(snap, {
-    headers: { "cache-control": "no-store" },
-  });
-}
+  // next-on-pages gives us bindings here:
+  const { env } = getRequestContext();
+  const kv = env?.BADGE_KV;
 
-export async function POST(req) {
-  try {
-    const { key, delta, set } = await req.json();
-    if (!key || typeof key !== "string") {
-      return NextResponse.json({ error: "Missing key" }, { status: 400 });
-    }
-
-    const snap =
-      typeof set !== "undefined"
-        ? await setCount(key, set)
-        : await increment(key, typeof delta === "number" ? delta : 1);
-
-    return NextResponse.json(snap, {
-      headers: { "cache-control": "no-store" },
-    });
-  } catch {
-    return NextResponse.json({ error: "Bad JSON" }, { status: 400 });
-  }
+  const snap = await getSnapshotKV(kv);
+  return NextResponse.json(snap, { headers: { "cache-control": "no-store" } });
 }
