@@ -4,4 +4,10 @@ compatibility_flags = ["nodejs_compat"]
 
 pages_build_output_dir = ".vercel/output/static"
 
-
+# 👇 Pages Functions bindings
+[[kv_namespaces]]
+binding = "BADGE_KV"
+# For production, paste the real KV id from your dashboard:
+id = "00000000000000000000000000000000"
+# For local/preview, Miniflare will create this automatically:
+preview_id = "BADGE_KV_PREVIEW"

@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+export const runtime = "edge";
 
 import { NextResponse } from "next/server";
 import { getSnapshot } from "@/lib/badgeStore";
@@ -9,7 +9,7 @@ export async function GET(req) {
   const label = searchParams.get("label") || key;
   const color = searchParams.get("color") || "#22d3ee";
 
-  const snap = getSnapshot();
+  const snap = await getSnapshot();
   const val = snap.counts?.[key] ?? 0;
   const text = `${label}: ${val.toLocaleString()}`;
 
@@ -28,14 +28,21 @@ export async function GET(req) {
     status: 200,
     headers: {
       "content-type": "image/svg+xml; charset=utf-8",
-      "cache-control": "no-store"
-    }
+      "cache-control": "no-store",
+    },
   });
 }
 
 function escapeXml(s) {
-  return String(s).replace(/[<>&'"]/g, (c) => ({ "<": "&lt;", "&": "&amp;", ">": "&gt;", "'": "&apos;", '"': "&quot;" }[c]));
+  return String(s).replace(/[<>&'"]/g, (c) => ({
+    "<": "&lt;",
+    "&": "&amp;",
+    ">": "&gt;",
+    "'": "&apos;",
+    '"': "&quot;",
+  }[c]));
 }
+
 function hexA(hex, a = 1) {
   try {
     const c = hex.replace("#", "");

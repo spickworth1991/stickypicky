@@ -1,30 +1,37 @@
-let counts = { views: 1287, orders: 42, signups: 313 };
-let updatedAt = Date.now();
+import { getRequestContext } from "@cloudflare/next-on-pages/adapter";
 
-function safeNumber(n, fallback = 0) {
-  const x = Number(n);
-  return Number.isFinite(x) ? x : fallback;
+function nowISO() {
+  return new Date().toISOString();
 }
 
-export function getSnapshot() {
-  return { counts, updatedAt };
+async function readAll() {
+  const env = getRequestContext().env;
+  const raw = await env.BADGE_KV.get("SNAPSHOT", "json");
+  if (raw && typeof raw === "object") return raw;
+  return { updatedAt: nowISO(), counts: {} };
 }
 
-export function increment(key, delta = 1) {
-  if (!(key in counts)) counts[key] = 0;
-  counts[key] = safeNumber(counts[key]) + safeNumber(delta, 0);
-  updatedAt = Date.now();
-  return { counts, updatedAt };
+async function writeAll(snap) {
+  const env = getRequestContext().env;
+  snap.updatedAt = nowISO();
+  await env.BADGE_KV.put("SNAPSHOT", JSON.stringify(snap));
 }
 
-export function setCount(key, value) {
-  counts[key] = safeNumber(value, 0);
-  updatedAt = Date.now();
-  return { counts, updatedAt };
+export async function getSnapshot() {
+  return readAll();
 }
 
-export function resetAll(next = { views: 0, orders: 0, signups: 0 }) {
-  counts = { ...next };
-  updatedAt = Date.now();
-  return { counts, updatedAt };
+export async function increment(key, delta = 1) {
+  const snap = await readAll();
+  const v = Number(snap.counts[key] ?? 0);
+  snap.counts[key] = v + delta;
+  await writeAll(snap);
+  return snap;
+}
+
+export async function setCount(key, value) {
+  const snap = await readAll();
+  snap.counts[key] = Number(value) || 0;
+  await writeAll(snap);
+  return snap;
 }
