@@ -1,16 +1,15 @@
-export const runtime = "edge";
 import { NextResponse } from "next/server";
-import { getCounts } from "@/lib/badgeStore";
+import { getRequestContext } from "@cloudflare/next-on-pages";
+import { getSnapshotKV } from "@/lib/badgeKV";
+
+export const runtime = "edge";
+export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const env = {
-    BADGE_KV: globalThis.BINDINGS?.BADGE_KV,
-    UPSTREAM_JSON: process.env.UPSTREAM_JSON,
-    BADGE_SEED_VIEWS: process.env.BADGE_SEED_VIEWS,
-    BADGE_SEED_CLICKS: process.env.BADGE_SEED_CLICKS,
-    BADGE_SEED_EMBEDS: process.env.BADGE_SEED_EMBEDS,
-  };
+  // next-on-pages gives us bindings here:
+  const { env } = getRequestContext();
+  const kv = env?.BADGE_KV;
 
-  const counts = await getCounts(env);
-  return NextResponse.json({ counts, now: new Date().toISOString() }, { headers: { "cache-control": "no-store" } });
+  const snap = await getSnapshotKV(kv);
+  return NextResponse.json(snap, { headers: { "cache-control": "no-store" } });
 }

@@ -1,50 +1,55 @@
 // src/lib/badgeStore.js
-// Robust KV counter with seeding + idempotent increments via per-event dedupe key.
-// Keeps JS only. Works on next-on-pages Edge.
+// Uses Cloudflare KV if bound (BADGE_KV). Seeds once from UPSTREAM_JSON or env defaults.
+// Keeps everything in JS and Edge-safe for next-on-pages.
 
 const KV_KEY = "badge_counts_v1";
-const DEDUPE_PREFIX = "badge_seen_"; // KV entries: badge_seen_<eventId>
-const DEDUPE_TTL_SECONDS = 15 * 60;  // 15 minutes
 
-function toNum(x, d = 0) {
-  const n = Number(x);
-  return Number.isFinite(n) ? n : d;
+// Read numeric from env string
+function numEnv(v, fallback = 0) {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : fallback;
 }
 
-function normalizeCounts(obj) {
+// build seed counts from env
+function seedFromEnv(env) {
   return {
-    views: toNum(obj?.views, 0),
-    clicks: toNum(obj?.clicks, 0),
-    embeds: toNum(obj?.embeds, 0),
+    views: numEnv(env?.BADGE_SEED_VIEWS, 0),
+    clicks: numEnv(env?.BADGE_SEED_CLICKS, 0),
+    embeds: numEnv(env?.BADGE_SEED_EMBEDS, 0),
   };
 }
 
-function seedFromEnv(env) {
-  return normalizeCounts({
-    views: env?.BADGE_SEED_VIEWS,
-    clicks: env?.BADGE_SEED_CLICKS,
-    embeds: env?.BADGE_SEED_EMBEDS,
-  });
-}
-
+// Attempt to seed from upstream JSON; expected either:
+// { counts: { views, clicks, embeds } } OR { views, clicks, embeds }
 async function seedFromUpstream(env) {
   if (!env?.UPSTREAM_JSON) return null;
   try {
     const res = await fetch(env.UPSTREAM_JSON, { cache: "no-store" });
     if (!res.ok) return null;
     const data = await res.json();
-    const payload = data?.counts && typeof data.counts === "object" ? data.counts : data;
-    return normalizeCounts(payload);
-  } catch {
-    return null;
+    if (data && typeof data === "object") {
+      if (data.counts && typeof data.counts === "object") return normalizeCounts(data.counts);
+      return normalizeCounts(data);
+    }
+  } catch {}
+  return null;
+}
+
+function normalizeCounts(obj) {
+  const out = {};
+  for (const k of ["views", "clicks", "embeds"]) {
+    const n = Number(obj?.[k]);
+    out[k] = Number.isFinite(n) ? n : 0;
   }
+  return out;
 }
 
 async function readKV(env) {
   const raw = await env?.BADGE_KV?.get(KV_KEY);
   if (!raw) return null;
   try {
-    return normalizeCounts(JSON.parse(raw));
+    const parsed = JSON.parse(raw);
+    return normalizeCounts(parsed);
   } catch {
     return null;
   }
@@ -55,13 +60,20 @@ async function writeKV(env, counts) {
   await env.BADGE_KV.put(KV_KEY, JSON.stringify(normalizeCounts(counts)));
 }
 
+// Ensure KV has an initial value; return current counts
 export async function ensureCounts(env) {
+  // 1) read KV
   const existing = await readKV(env);
   if (existing) return existing;
 
+  // 2) seed from upstream JSON (if provided)
   const upstream = await seedFromUpstream(env);
-  if (upstream) { await writeKV(env, upstream); return upstream; }
+  if (upstream) {
+    await writeKV(env, upstream);
+    return upstream;
+  }
 
+  // 3) fall back to env defaults
   const seeded = seedFromEnv(env);
   await writeKV(env, seeded);
   return seeded;
@@ -72,48 +84,14 @@ export async function getCounts(env) {
   return { ...counts };
 }
 
-// ---- Dedup helpers ----
-async function alreadySeen(env, eventId) {
-  if (!env?.BADGE_KV) return false;
-  const key = DEDUPE_PREFIX + eventId;
-  const hit = await env.BADGE_KV.get(key);
-  return !!hit;
-}
-
-async function markSeen(env, eventId) {
-  if (!env?.BADGE_KV) return;
-  const key = DEDUPE_PREFIX + eventId;
-  // KV put with expiration
-  const expirationTtl = DEDUPE_TTL_SECONDS;
-  await env.BADGE_KV.put(key, "1", { expirationTtl });
-}
-
-// ---- Increment with tiny retry to reduce races ----
-export async function incrementIdempotent(env, key, eventId, by = 1) {
-  key = ["views", "clicks", "embeds"].includes(key) ? key : "views";
-
-  // If we have seen this exact event recently, skip increment.
-  if (await alreadySeen(env, eventId)) {
-    return getCounts(env);
+// Note: KV doesn't support atomic increments; this is get-modify-put.
+// For low volume it's fine; for high contention we'd move to Durable Objects.
+export async function increment(env, key = "views", by = 1) {
+  const counts = await ensureCounts(env);
+  const n = Number(by);
+  if (Number.isFinite(n)) {
+    counts[key] = (counts[key] ?? 0) + n;
+    await writeKV(env, counts);
   }
-
-  // Read-modify-write with small retry window.
-  let attempts = 0;
-  while (attempts < 3) {
-    attempts++;
-    const counts = await ensureCounts(env);
-    counts[key] = toNum(counts[key]) + toNum(by, 1);
-    try {
-      await writeKV(env, counts);
-      // Mark dedupe after successful write
-      await markSeen(env, eventId);
-      return { ...counts };
-    } catch {
-      // brief backoff before retrying
-      await new Promise(r => setTimeout(r, 25 * attempts));
-    }
-  }
-
-  // If we failed to write repeatedly, return current (non-fatal)
-  return getCounts(env);
+  return { ...counts };
 }
