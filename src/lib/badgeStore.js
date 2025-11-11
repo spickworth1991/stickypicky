@@ -1,4 +1,4 @@
-import { getRequestContext } from "@cloudflare/next-on-pages/adapter";
+import { getRequestContext } from "@cloudflare/next-on-pages";
 
 function nowISO() {
   return new Date().toISOString();
