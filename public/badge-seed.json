@@ -1,0 +1,12 @@
+{
+  "counts": {
+    "views": 324,
+    "clicks": 18,
+    "embeds": 7
+  },
+  "meta": {
+    "source": "StickyPicky portfolio seed",
+    "generated": "2025-11-11T00:00:00Z",
+    "notes": "Initial baseline for Cloudflare KV badge counter"
+  }
+}
